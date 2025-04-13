@@ -85,6 +85,7 @@ pip install -r requirements.txt
 
 # Run the app
 streamlit run Home.py
+# Note: LLM features require Apple Silicon (Mac) and will not run on Streamlit Cloud
 
 # Optional: Enable counterfactuals via DiCE
 pip install -r dice_patch.txt
@@ -100,6 +101,7 @@ Uses [mlx-community/Mistral-7B-Instruct-v0.2-4bit] locally with:
 - Custom sampling (temperature, top-k, top-p)
 - Streaming responses
 - Caching of responses for each sample in `/logs/explanations/`
+> ⚠️ **Note:** LLM-based explanations use `mlx` and `mlx-lm`, which currently require a Mac with Apple Silicon (M1/M2/M3) and cannot run on Streamlit Cloud. On deployed versions, LLM features will be disabled with a friendly warning.
 
 ---
 
@@ -143,6 +145,6 @@ This file applies:
 
 ---
 
-## 🧠 Demo
+## 🧠 [Demo](https://whitebox.streamlit.app)
 
-Comming soon.
+https://whitebox.streamlit.app
