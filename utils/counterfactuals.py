@@ -1,7 +1,10 @@
 import pandas as pd
-import dice_ml
-from dice_ml.utils import helpers
-
+try:
+    import dice_ml
+    from dice_ml.utils import helpers
+    DICE_AVAILABLE = True
+except ImportError:
+    DICE_AVAILABLE = False
 
 def load_dice_explainer(model, X_train, y_train, outcome_name="income"):
     """
