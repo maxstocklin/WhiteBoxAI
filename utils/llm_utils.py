@@ -1,4 +1,4 @@
-from mlx_lm import load, generate
+# from mlx_lm import load, generate
 import streamlit as st
 import mlx.core as mx
 import numpy as np

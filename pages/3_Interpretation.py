@@ -9,12 +9,14 @@ st.set_page_config(layout="wide")
 from utils.data_loader import load_data, preprocess, decode_features
 from utils.model_utils import load_model_and_explainer
 from utils.interpret_utils import get_feature_path_ranges, get_used_features, get_confidence_report
-from utils.llm_utils import (
-    build_interpretation_prompt,
-    generate_streaming_chunks,
-    sampler_with_temperature_topk_topp,
-    load
-)
+
+''' Commented out for Streamlit compatibility'''
+# from utils.llm_utils import (
+#     build_interpretation_prompt,
+#     generate_streaming_chunks,
+#     sampler_with_temperature_topk_topp,
+#     load
+# )
 
 st.title("🔍 Sample Interpretation")
 
@@ -98,43 +100,48 @@ with st.expander("🧠 Assistant Assessment by Mistral", expanded=False):
         pred_label = cached["predicted_label"]
         pred_proba = cached["predicted_proba"]
         true_label = cached["true_label"]
+        st.markdown(explanation)
 
     else:
-        st.warning("🔄 No cache found. Running LLM interpretation...")
+        
+        st.warning(f"⚠️ LLM interpretation currently not available for sample {sample_index}. Coming soon!")
+        ''' Commented out for Streamlit compatibility'''
 
-        prompt = build_interpretation_prompt(sample_index, pred_label, pred_proba, summary_df)
+        # st.warning("🔄 No cache found. Running LLM interpretation...")
 
-        try:
-            model_mlx, tokenizer = load("mlx-community/Mistral-7B-Instruct-v0.2-4bit")
-        except Exception as e:
-            st.warning(f"⚠️ LLM interpretation currently not available for sample {sample_index}. Coming soon!")
-            st.stop()
+        # prompt = build_interpretation_prompt(sample_index, pred_label, pred_proba, summary_df)
 
-        sampler = sampler_with_temperature_topk_topp(temperature=0.7, top_k=40, top_p=0.9)
+        # try:
+        #     model_mlx, tokenizer = load("mlx-community/Mistral-7B-Instruct-v0.2-4bit")
+        # except Exception as e:
+        #     st.warning(f"⚠️ LLM interpretation currently not available for sample {sample_index}. Coming soon!")
+        #     st.stop()
 
-        explanation_chunks = []
-        for chunk in generate_streaming_chunks(model_mlx, tokenizer, prompt, max_tokens=5000, sampler=sampler):
-            explanation_chunks.append(chunk)
-        explanation = "".join(explanation_chunks)
+        # sampler = sampler_with_temperature_topk_topp(temperature=0.7, top_k=40, top_p=0.9)
 
-        output = {
-            "sample_index": sample_index,
-            "true_label": int(true_label),
-            "predicted_label": int(pred_label),
-            "predicted_proba": float(pred_proba),
-            "used_features": used_features,
-            "summary_df": summary_df.to_dict(orient="records"),
-            "llm_prompt": prompt,
-            "llm_response": explanation
-        }
-        cache_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(cache_path, "w", encoding="utf-8") as f:
-            json.dump(output, f, indent=2, ensure_ascii=False)
+        # explanation_chunks = []
+        # for chunk in generate_streaming_chunks(model_mlx, tokenizer, prompt, max_tokens=5000, sampler=sampler):
+        #     explanation_chunks.append(chunk)
+        # explanation = "".join(explanation_chunks)
 
-        st.success(f"✅ Interpretation complete and saved to cache")
+        # output = {
+        #     "sample_index": sample_index,
+        #     "true_label": int(true_label),
+        #     "predicted_label": int(pred_label),
+        #     "predicted_proba": float(pred_proba),
+        #     "used_features": used_features,
+        #     "summary_df": summary_df.to_dict(orient="records"),
+        #     "llm_prompt": prompt,
+        #     "llm_response": explanation
+        # }
+        # cache_path.parent.mkdir(parents=True, exist_ok=True)
+        # with open(cache_path, "w", encoding="utf-8") as f:
+        #     json.dump(output, f, indent=2, ensure_ascii=False)
+
+        # st.success(f"✅ Interpretation complete and saved to cache")
 
 
-    st.markdown(explanation)
+        # st.markdown(explanation)
 
 
 

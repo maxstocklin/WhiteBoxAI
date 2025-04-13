@@ -179,34 +179,42 @@ with st.expander("🔍 Interaction Explorer"):
                 binned_df = get_binned_interactions(X_sample_human, interaction_values, selected_feature, selected_pair)
                 explanation = ""
         else:
-            binned_df = get_binned_interactions(X_sample_human, interaction_values, selected_feature, selected_pair)
+            ''' Added for Streamlit compatibility'''
 
-            from utils.llm_utils import (
-                build_correlation_prompt,
-                generate_streaming_chunks,
-                sampler_with_temperature_topk_topp,
-                load
-            )
-            try:
-                model_mlx, tokenizer = load("mlx-community/Mistral-7B-Instruct-v0.2-4bit")
-            except Exception as e:
-                st.warning(f"⚠️ LLM interpretation not available at the moment — skipping explanation. ({e})")
-                binned_cache.write_text(binned_df.to_json(orient="records"), encoding="utf-8")
-                llm_cache.write_text("⚠️ LLM interpretation not available at the moment.", encoding="utf-8")
-                explanation = "⚠️ LLM interpretation not available at the moment."
-            else:
-                sampler = sampler_with_temperature_topk_topp(temperature=0.7, top_k=40, top_p=0.9)
+            st.warning(f"⚠️ LLM interpretation not available at the moment — skipping explanation. ({e})")
+            binned_cache.write_text(binned_df.to_json(orient="records"), encoding="utf-8")
+            llm_cache.write_text("⚠️ LLM interpretation not available at the moment.", encoding="utf-8")
+            explanation = "⚠️ LLM interpretation not available at the moment."
 
-                explanation_chunks = []
-                with st.spinner("Generating LLM insight..."):
-                    for chunk in generate_streaming_chunks(
-                        model_mlx, tokenizer, prompt, max_tokens=1000, sampler=sampler
-                    ):
-                        explanation_chunks.append(chunk)
-                explanation = "".join(explanation_chunks)
+            ''' Commented out for Streamlit compatibility'''
+            # binned_df = get_binned_interactions(X_sample_human, interaction_values, selected_feature, selected_pair)
 
-                binned_cache.write_text(binned_df.to_json(orient="records"), encoding="utf-8")
-                llm_cache.write_text(explanation, encoding="utf-8")
+            # from utils.llm_utils import (
+            #     build_correlation_prompt,
+            #     generate_streaming_chunks,
+            #     sampler_with_temperature_topk_topp,
+            #     load
+            # )
+            # try:
+            #     model_mlx, tokenizer = load("mlx-community/Mistral-7B-Instruct-v0.2-4bit")
+            # except Exception as e:
+                # st.warning(f"⚠️ LLM interpretation not available at the moment — skipping explanation. ({e})")
+                # binned_cache.write_text(binned_df.to_json(orient="records"), encoding="utf-8")
+                # llm_cache.write_text("⚠️ LLM interpretation not available at the moment.", encoding="utf-8")
+                # explanation = "⚠️ LLM interpretation not available at the moment."
+            # else:
+            #     sampler = sampler_with_temperature_topk_topp(temperature=0.7, top_k=40, top_p=0.9)
+
+            #     explanation_chunks = []
+            #     with st.spinner("Generating LLM insight..."):
+            #         for chunk in generate_streaming_chunks(
+            #             model_mlx, tokenizer, prompt, max_tokens=1000, sampler=sampler
+            #         ):
+            #             explanation_chunks.append(chunk)
+            #     explanation = "".join(explanation_chunks)
+
+            #     binned_cache.write_text(binned_df.to_json(orient="records"), encoding="utf-8")
+            #     llm_cache.write_text(explanation, encoding="utf-8")
 
         if not binned_df.empty:
             st.subheader(
