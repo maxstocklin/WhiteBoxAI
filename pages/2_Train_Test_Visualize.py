@@ -179,14 +179,14 @@ with st.expander("🔍 Interaction Explorer"):
                 binned_df = get_binned_interactions(X_sample_human, interaction_values, selected_feature, selected_pair)
                 explanation = ""
         else:
-            ''' Added for Streamlit compatibility'''
+            # ''' Added for Streamlit compatibility'''
 
             st.warning(f"⚠️ LLM interpretation not available at the moment — skipping explanation. ({e})")
             binned_cache.write_text(binned_df.to_json(orient="records"), encoding="utf-8")
             llm_cache.write_text("⚠️ LLM interpretation not available at the moment.", encoding="utf-8")
             explanation = "⚠️ LLM interpretation not available at the moment."
 
-            ''' Commented out for Streamlit compatibility'''
+            # ''' Commented out for Streamlit compatibility'''
             # binned_df = get_binned_interactions(X_sample_human, interaction_values, selected_feature, selected_pair)
 
             # from utils.llm_utils import (

@@ -10,7 +10,7 @@ from utils.data_loader import load_data, preprocess, decode_features
 from utils.model_utils import load_model_and_explainer
 from utils.interpret_utils import get_feature_path_ranges, get_used_features, get_confidence_report
 
-''' Commented out for Streamlit compatibility'''
+# ''' Commented out for Streamlit compatibility'''
 # from utils.llm_utils import (
 #     build_interpretation_prompt,
 #     generate_streaming_chunks,
@@ -103,9 +103,10 @@ with st.expander("🧠 Assistant Assessment by Mistral", expanded=False):
         st.markdown(explanation)
 
     else:
-        
+        # ''' Added for Streamlit compatibility'''
         st.warning(f"⚠️ LLM interpretation currently not available for sample {sample_index}. Coming soon!")
-        ''' Commented out for Streamlit compatibility'''
+
+        # ''' Commented out for Streamlit compatibility'''
 
         # st.warning("🔄 No cache found. Running LLM interpretation...")
 
