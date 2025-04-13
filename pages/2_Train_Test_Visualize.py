@@ -7,14 +7,15 @@ from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve
 import shap
+
+st.set_page_config(layout="wide")
+
 from utils.model_utils import load_model_and_explainer
 from utils.shap_utils import create_interaction_plot, get_feature_bins
 from utils.data_loader import load_data, preprocess, decode_features
 from utils.feature_info import FEATURE_DESCRIPTIONS
 from pathlib import Path
 import json
-
-st.set_page_config(layout="wide")
 
 st.title("🏋️ Train / Test / Visualize")
 

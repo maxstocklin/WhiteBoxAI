@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 import shap, json
 from pathlib import Path
 
+st.set_page_config(layout="wide")
+
 from utils.data_loader import load_data, preprocess, decode_features
 from utils.model_utils import load_model_and_explainer
 from utils.interpret_utils import get_feature_path_ranges, get_used_features, get_confidence_report
@@ -13,8 +15,6 @@ from utils.llm_utils import (
     sampler_with_temperature_topk_topp,
     load
 )
-
-st.set_page_config(layout="wide")
 
 st.title("🔍 Sample Interpretation")
 

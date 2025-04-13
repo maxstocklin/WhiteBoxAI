@@ -3,12 +3,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import shap
+
+st.set_page_config(layout="wide")
+
 from utils.data_loader import load_data, preprocess, decode_features
 from utils.model_utils import load_model_and_explainer
 from sklearn.model_selection import train_test_split
-
-st.set_page_config(layout="wide")
 
 st.title("⚖️ Biais Dashboard")
 

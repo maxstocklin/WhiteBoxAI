@@ -1,9 +1,10 @@
 import streamlit as st
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from utils.data_loader import load_data, preprocess
 
 st.set_page_config(layout="wide")
+
+from utils.data_loader import load_data, preprocess
 
 st.title("📄 Dataset Viewer")
 
