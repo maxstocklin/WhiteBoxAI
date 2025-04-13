@@ -1,0 +1,3 @@
+1. The interaction effect between Fnlwgt and Occupation is generally small and varies between positive and negative values, with an average value close to zero when Fnlwgt is N/A.
+2. There doesn't seem to be a clear threshold or non-linear effect based on the provided interaction values for different bins of Fnlwgt.
+3. The absence of a clear threshold or non-linear effect suggests that the relationship between Fnlwgt and Occupation is relatively consistent across the observed range. However, the small interaction effect sizes indicate that the relationship may not be strong enough to significantly impact model predictions or interpretation. This lack of transparency could make it difficult to fully understand how these variables influence the model's outcome.

@@ -1,0 +1,5 @@
+1. The interaction effect between Relationship and Hours Per Week is generally negative, indicating that a poorer relationship quality tends to have a stronger negative impact on the prediction as the hours per week increase. However, there are also instances where a stronger relationship quality leads to a slightly positive interaction effect, suggesting a potential protective effect.
+
+2. The interaction effect does not show any clear threshold or non-linear effects across the different bins of Relationship. The interaction strength remains relatively consistent, with only a slight increase as the relationship quality improves.
+
+3. The consistent negative interaction effect between Relationship and Hours Per Week indicates that a poorer relationship quality may exacerbate the negative impact of longer working hours on the prediction. This finding highlights the importance of addressing both individual factors (Hours Per Week) and relational factors (Relationship) when making predictions. Transparency in model behavior is essential to ensure that such interaction effects are understood by stakeholders and can inform targeted interventions or policy decisions.

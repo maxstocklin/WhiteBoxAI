@@ -1,0 +1,32 @@
+[project]
+name = "xgb-interpretability-app"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Your Name",email = "you@example.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "streamlit (>=1.44.1,<2.0.0)",
+    "pandas (>=2.2.3,<3.0.0)",
+    "scikit-learn (>=1.6.1,<2.0.0)",
+    "xgboost (>=3.0.0,<4.0.0)",
+    "shap (>=0.47.1,<0.48.0)",
+    "matplotlib (>=3.10.1,<4.0.0)",
+    "seaborn (>=0.13.2,<0.14.0)",
+    "mlx-lm (>=0.22.5,<0.23.0)"
+]
+
+[tool.poetry.extras]
+dice = ["dice-ml"]
+
+# NOTE: dice-ml 0.11 officially requires pandas < 2.0.0.
+# To use it with pandas >= 2.2.3, install it manually in the poetry environment:
+# poetry run pip install pandas<2.0.0
+# poetry run pip install dice-ml==0.11
+# poetry run pip install pandas==2.2.3
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

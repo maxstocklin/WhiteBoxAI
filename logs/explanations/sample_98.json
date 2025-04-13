@@ -1,0 +1,166 @@
+{
+  "sample_index": 98,
+  "true_label": 0,
+  "predicted_label": 0,
+  "predicted_proba": 0.007420546840876341,
+  "used_features": [
+    "relationship",
+    "capital_gain",
+    "education_num",
+    "hours_per_week",
+    "capital_loss",
+    "marital_status",
+    "sex",
+    "age",
+    "education",
+    "fnlwgt",
+    "occupation",
+    "race",
+    "workclass",
+    "native_country"
+  ],
+  "summary_df": [
+    {
+      "Feature": "Relationship",
+      "Value": "Own-child",
+      "Z-Score (vs class)": "—",
+      "Tree Range": "One of: ['Husband', 'Not-in-family', 'Other-relative', 'Own-child', 'Unmarried', 'Wife']",
+      "% Class in Range": 100.0,
+      "% in Range = Class": 75.9,
+      "SHAP": -1.0410000085830688,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Capital Gain",
+      "Value": 0,
+      "Z-Score (vs class)": -0.15,
+      "Tree Range": "[-inf, 114.0)",
+      "% Class in Range": 95.9,
+      "% in Range = Class": 79.3,
+      "SHAP": -0.16899999976158142,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Education Num",
+      "Value": 10,
+      "Z-Score (vs class)": 0.16,
+      "Tree Range": "[10.0, 11.0)",
+      "% Class in Range": 23.7,
+      "% in Range = Class": 80.9,
+      "SHAP": 0.020999999716877937,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Hours Per Week",
+      "Value": 40,
+      "Z-Score (vs class)": 0.1,
+      "Tree Range": "[40.0, 41.0)",
+      "% Class in Range": 48.4,
+      "% in Range = Class": 78.6,
+      "SHAP": -0.23600000143051147,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Capital Loss",
+      "Value": 0,
+      "Z-Score (vs class)": -0.17,
+      "Tree Range": "[-inf, 810.0)",
+      "% Class in Range": 97.0,
+      "% in Range = Class": 77.2,
+      "SHAP": -0.028999999165534973,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Marital Status",
+      "Value": "Divorced",
+      "Z-Score (vs class)": "—",
+      "Tree Range": "One of: ['Divorced', 'Married-AF-spouse', 'Married-civ-spouse', 'Married-spouse-absent', 'Never-married', 'Separated']",
+      "% Class in Range": 96.4,
+      "% in Range = Class": 75.4,
+      "SHAP": -0.6589999794960022,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Sex",
+      "Value": "Male",
+      "Z-Score (vs class)": "—",
+      "Tree Range": "One of: ['Male']",
+      "% Class in Range": 61.1,
+      "% in Range = Class": 69.4,
+      "SHAP": 0.1550000011920929,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Age",
+      "Value": 27,
+      "Z-Score (vs class)": -0.7,
+      "Tree Range": "[27.0, 28.0)",
+      "% Class in Range": 3.1,
+      "% in Range = Class": 90.3,
+      "SHAP": -0.8360000252723694,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Education",
+      "Value": "Some-college",
+      "Z-Score (vs class)": "—",
+      "Tree Range": "One of: ['12th', '1st-4th', '5th-6th', '7th-8th', '9th', 'Assoc-acdm', 'Assoc-voc', 'Bachelors', 'Doctorate', 'HS-grad', 'Masters', 'Preschool', 'Prof-school', 'Some-college']",
+      "% Class in Range": 91.9,
+      "% in Range = Class": 74.7,
+      "SHAP": 0.017999999225139618,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Fnlwgt",
+      "Value": 224421,
+      "Z-Score (vs class)": 0.32,
+      "Tree Range": "[220543.0, 225780.0)",
+      "% Class in Range": 1.6,
+      "% in Range = Class": 78.4,
+      "SHAP": -0.11999999731779099,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Occupation",
+      "Value": "?",
+      "Z-Score (vs class)": "—",
+      "Tree Range": "One of: ['?', 'Adm-clerical', 'Armed-Forces', 'Craft-repair', 'Exec-managerial', 'Farming-fishing', 'Handlers-cleaners', 'Machine-op-inspct', 'Other-service', 'Priv-house-serv', 'Prof-specialty', 'Protective-serv', 'Sales', 'Tech-support']",
+      "% Class in Range": 94.8,
+      "% in Range = Class": 75.7,
+      "SHAP": -1.0379999876022339,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Race",
+      "Value": "White",
+      "Z-Score (vs class)": "—",
+      "Tree Range": "One of: ['Asian-Pac-Islander', 'Black', 'Other', 'White']",
+      "% Class in Range": 98.9,
+      "% in Range = Class": 75.8,
+      "SHAP": 0.02800000086426735,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Workclass",
+      "Value": "?",
+      "Z-Score (vs class)": "—",
+      "Tree Range": "One of: ['?', 'Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc']",
+      "% Class in Range": 96.1,
+      "% in Range = Class": 76.0,
+      "SHAP": 0.30300000309944153,
+      "Used in Trees": "Yes"
+    },
+    {
+      "Feature": "Native Country",
+      "Value": "United-States",
+      "Z-Score (vs class)": "—",
+      "Tree Range": "One of: ['?', 'Cambodia', 'Canada', 'China', 'Columbia', 'Cuba', 'Dominican-Republic', 'Ecuador', 'El-Salvador', 'England', 'France', 'Germany', 'Greece', 'Guatemala', 'Haiti', 'Holand-Netherlands', 'Honduras', 'Hong', 'Hungary', 'India', 'Iran', 'Ireland', 'Italy', 'Jamaica', 'Japan', 'Laos', 'Mexico', 'Nicaragua', 'Outlying-US(Guam-USVI-etc)', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto-Rico', 'Scotland', 'South', 'Taiwan', 'Thailand', 'Trinadad&Tobago', 'United-States', 'Vietnam', 'Yugoslavia']",
+      "% Class in Range": 100.0,
+      "% in Range = Class": 75.9,
+      "SHAP": 0.009999999776482582,
+      "Used in Trees": "Yes"
+    }
+  ],
+  "llm_prompt": "<s>[INST]\n\nYou are an expert in machine learning interpretability.\n\nA binary classifier has made a prediction for sample #98:\n- ✅ **Predicted label**: 0\n- 📈 **Confidence** (probability of label 1): 0.74%\n\nEach feature below was used in the decision. You are provided with:\n- The actual feature value\n- A Z-score relative to others in the same class\n- The decision tree threshold range the feature was involved in\n- The SHAP value for that feature (measuring its impact on increasing or decreasing the probability of label 1)\n\n**Important rule:**\n- ➕ Positive SHAP value = pushed prediction toward label **1**\n- ➖ Negative SHAP value = pushed prediction toward label **0**\n- SHAP does **not** mean pushing toward the predicted class — just toward class 1 or 0.\n\n---\n\nNow analyze this prediction:\n1. Give a short overview of how confident the model is and what class it leaned toward.\n2. List the top 3 most influential features with short analysis.\n3. Summarize your interpretation in bullet points.\n4. Finish with your own 1–2 sentence assessment of whether this prediction seems reasonable.\n\n---\n\n**Feature Summary Table:**\n\n- **Relationship**: value = Own-child, Z = —, Tree condition = One of: ['Husband', 'Not-in-family', 'Other-relative', 'Own-child', 'Unmarried', 'Wife'], SHAP = -1.041\n- **Capital Gain**: value = 0, Z = —, Tree condition = [-inf, 114.0), SHAP = -0.169\n- **Education Num**: value = 10, Z = —, Tree condition = [10.0, 11.0), SHAP = 0.021\n- **Hours Per Week**: value = 40, Z = —, Tree condition = [40.0, 41.0), SHAP = -0.236\n- **Capital Loss**: value = 0, Z = —, Tree condition = [-inf, 810.0), SHAP = -0.029\n- **Marital Status**: value = Divorced, Z = —, Tree condition = One of: ['Divorced', 'Married-AF-spouse', 'Married-civ-spouse', 'Married-spouse-absent', 'Never-married', 'Separated'], SHAP = -0.659\n- **Sex**: value = Male, Z = —, Tree condition = One of: ['Male'], SHAP = 0.155\n- **Age**: value = 27, Z = —, Tree condition = [27.0, 28.0), SHAP = -0.836\n- **Education**: value = Some-college, Z = —, Tree condition = One of: ['12th', '1st-4th', '5th-6th', '7th-8th', '9th', 'Assoc-acdm', 'Assoc-voc', 'Bachelors', 'Doctorate', 'HS-grad', 'Masters', 'Preschool', 'Prof-school', 'Some-college'], SHAP = 0.018\n- **Fnlwgt**: value = 224421, Z = —, Tree condition = [220543.0, 225780.0), SHAP = -0.120\n- **Occupation**: value = ?, Z = —, Tree condition = One of: ['?', 'Adm-clerical', 'Armed-Forces', 'Craft-repair', 'Exec-managerial', 'Farming-fishing', 'Handlers-cleaners', 'Machine-op-inspct', 'Other-service', 'Priv-house-serv', 'Prof-specialty', 'Protective-serv', 'Sales', 'Tech-support'], SHAP = -1.038\n- **Race**: value = White, Z = —, Tree condition = One of: ['Asian-Pac-Islander', 'Black', 'Other', 'White'], SHAP = 0.028\n- **Workclass**: value = ?, Z = —, Tree condition = One of: ['?', 'Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc'], SHAP = 0.303\n- **Native Country**: value = United-States, Z = —, Tree condition = One of: ['?', 'Cambodia', 'Canada', 'China', 'Columbia', 'Cuba', 'Dominican-Republic', 'Ecuador', 'El-Salvador', 'England', 'France', 'Germany', 'Greece', 'Guatemala', 'Haiti', 'Holand-Netherlands', 'Honduras', 'Hong', 'Hungary', 'India', 'Iran', 'Ireland', 'Italy', 'Jamaica', 'Japan', 'Laos', 'Mexico', 'Nicaragua', 'Outlying-US(Guam-USVI-etc)', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto-Rico', 'Scotland', 'South', 'Taiwan', 'Thailand', 'Trinadad&Tobago', 'United-States', 'Vietnam', 'Yugoslavia'], SHAP = 0.010\n[/INST]",
+  "llm_response": "**Overview:** The model predicted a label of 0 for sample #98 with a confidence of only 0.74%. This means that the model is relatively unsure about its prediction and leans slightly toward class 0.\n\n**Top 3 Influential Features:**\n1. **Marital Status**: With a SHAP value of -0.659, being divorced decreases the probability of class 1 (label 1 represents the positive class). This feature had the strongest negative influence on the prediction.\n2. **Occupation**: The occupation feature had a SHAP value of -1.038, meaning it also decreases the probability of class 1. The exact occupation value is missing, but in general, certain occupations may be associated with a lower likelihood of the positive class.\n3. **Workclass**: The workclass feature had a SHAP value of 0.303, which is a positive value, meaning it slightly increases the probability of class 1. However, its impact is not as strong as the features with negative SHAP values.\n\n**Interpretation:**\n- Divorced status and an unknown occupation that is typically associated with a lower likelihood of the positive class had the strongest negative influences on the prediction.\n- The workclass feature, while having a positive SHAP value, did not contribute as much to the prediction as the strongly negative features.\n\n**Assessment:** The prediction seems reasonable given the model's low confidence and the presence of influential features that push the prediction toward class 0."
+}

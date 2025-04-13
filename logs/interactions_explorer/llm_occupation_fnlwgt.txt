@@ -1,0 +1,5 @@
+1. The interaction effect between Occupation and Fnlwgt shows a slight negative interaction when the Occupation is at a lower level (interaction = -0.0023 and interaction = -0.0089), while a positive interaction is observed when Occupation is at higher levels (interaction = 0.0112, interaction = 0.0310, and interaction = 0.0097).
+
+2. There does not appear to be a clear threshold or non-linear effect in the interaction, as the change in interaction strength is relatively consistent across the different bins of Occupation.
+
+3. The interaction effect between Occupation and Fnlwgt suggests a complex relationship where the influence of Fnlwgt on the model's predictions depends on the level of Occupation. This finding adds valuable insight into the model's behavior, but it also highlights the importance of interpreting interaction effects to ensure transparency and understanding of the underlying relationships in the data.

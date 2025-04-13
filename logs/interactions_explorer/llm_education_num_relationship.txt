@@ -1,0 +1,5 @@
+1. The interaction effect between Education Num and Relationship is generally weak when Education Num is at N/A or low levels, with negative values indicating a slight negative interaction, and positive values suggesting a slight positive interaction. However, as Education Num increases, the interaction effect becomes more prominent and varies in both directions, with a larger positive interaction effect at Education Num = 0.0538 and a larger negative interaction effect at Education Num = -0.0087.
+
+2. There doesn't appear to be a clear threshold or non-linear effect based on the provided data. The interaction effect seems to change gradually as Education Num increases, without a significant jump or drop at any specific Education Num value.
+
+3. This interaction effect suggests that the relationship between an individual's Education Num and the target variable may depend on the specific level of education. Understanding these interaction effects can help improve model accuracy and transparency by allowing for more nuanced interpretations of the data and the underlying relationships between the variables.

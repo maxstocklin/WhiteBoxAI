@@ -1,0 +1,5 @@
+1. The interaction effect between Race and Fnlwgt appears to be mostly negative, with the largest negative interaction occurring when Race is not a specific category (interaction = -0.0439). The positive interaction effects are relatively small in magnitude.
+
+2. There doesn't seem to be a clear threshold or non-linear effect based on the information provided. The interaction effect remains relatively consistent across the different bins of Race, with no significant change in trend.
+
+3. The interaction effect between Race and Fnlwgt suggests that these two features might have a complex relationship in influencing the model's predictions. Understanding the underlying reasons for this interaction effect is crucial to ensure model fairness and transparency. This finding emphasizes the importance of interpreting interaction effects in machine learning models, especially when dealing with sensitive features like Race.

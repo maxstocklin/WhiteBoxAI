@@ -1,0 +1,5 @@
+1. The interaction effect between Marital Status and Age is generally negative when Marital Status is coded as "N/A" or missing values. This indicates that the relationship between Age and the model's predictions is slightly weaker when Marital Status is unknown.
+
+2. There doesn't seem to be any clear threshold or non-linear effects based on the provided interaction strengths. The interaction effect remains relatively constant across all the bins of Marital Status, with no significant change in trend.
+
+3. The consistent negative interaction effect between Marital Status and Age implies that the relationship between Age and the model's predictions is slightly affected by Marital Status, but the effect is not strong enough to justify considering it a significant interaction. This finding adds some transparency to the model by revealing a potential factor that influences predictions, but the lack of a clear threshold or non-linear effect suggests that Marital Status may not be a crucial feature for understanding the relationship between Age and the model's predictions.
