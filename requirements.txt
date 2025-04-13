@@ -1,4 +1,6 @@
-altair==5.5.0 ; python_version >= "3.11"
+dice-ml==5.5.0 ; python_version >= "3.11"
+
+altair==0.11 ; python_version >= "3.11"
 attrs==25.3.0 ; python_version >= "3.11"
 blinker==1.9.0 ; python_version >= "3.11"
 cachetools==5.5.2 ; python_version >= "3.11"
