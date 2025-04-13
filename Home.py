@@ -1,7 +1,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="XGBoost Interpretability Explorer",
+    page_title="WhiteBox AI",
     page_icon="📊",
     layout="wide",
 )
