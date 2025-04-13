@@ -24,7 +24,7 @@ elif selection == "⚖️ Biais Dashboard":
     st.switch_page("pages/5_Biais_Dashboard.py")
 
 
-st.title("👋 Welcome to the XGBoost Interpretability App")
+st.title("👋 Welcome to WhiteBox AI")
 
 st.markdown("""
 This tool is designed to help **everyone** — data scientists, domain experts, and decision makers — understand how a machine learning model makes its predictions. It’s built on top of **XGBoost**, one of the most powerful algorithms for tabular data, and enriched with explainability features.
