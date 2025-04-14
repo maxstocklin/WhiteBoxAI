@@ -24,48 +24,58 @@ elif selection == "⚖️ Fairness & Bias Analyisis":
     st.switch_page("pages/5_Fairness_&_Bias_Analyisis.py")
 
 
-st.title("👋 Welcome to WhiteBox AI")
+st.title("Welcome to WhiteBox AI")
 
 st.markdown("""
-This tool is designed to help **everyone** — data scientists, domain experts, and decision makers — understand how a machine learning model makes its predictions. It’s built on top of **XGBoost**, one of the most powerful algorithms for tabular data, and enriched with explainability features.
+WhiteBox AI is an interactive tool designed to help you **understand how machine learning models make decisions**.
+""")
+st.info("""
+In this demo, we use **XGBoost** — one of the most powerful algorithms for tabular data — to solve a simple but meaningful task:
 
-You’ll find a suite of pages, each tailored to a specific exploration task:
+> 🎯 **Can we predict whether someone earns more than $50K/year based on their personal and professional profile?**
+""")
+st.markdown("""
 
-- 📄 **Data Overview**: Browse test samples with filtering and direct links to interpretation.
-- 🏋️‍♂️ **Performance Dashboard**: Evaluate model performance and explore global feature importance.
-- 🔬 **XAI Prediction Breakdown**: Deep-dive into a single prediction with a multi-layered confidence report, detailed reasoning report, and a natural language summary.
-- 🎚 **Real-Time Simulator**: Adjust input features and see how predictions shift. Try counterfactuals, feature tweaking, and SHAP comparisons.
-- ⚖️ **Fairness & Bias Analyisis**: Investigate bias across sensitive attributes like sex and race. Includes fairness metrics and SHAP attribution by group.
+We go beyond accuracy. WhiteBox AI adds **explainability layers** to every prediction, helping:
+- Data scientists explore model behavior
+- Domain experts understand feature influence
+- Decision makers build trust in AI
 
-Use the sidebar to navigate between these pages and uncover what drives each prediction.
+---
+
+### What You Can Explore
+
+- `Data Overview`: Browse individuals and explore input features.
+- `Performance Dashboard`: Evaluate model quality and global feature importance.
+- `Prediction Breakdown`: See what drove a specific prediction — with confidence, reasoning, and natural-language summary.
+- `Real-Time Simulator`: Adjust inputs and watch predictions and explanations change in real time.
+- `Fairness & Bias Analysis`: Investigate group disparities and SHAP differences by race, sex, and more.
+
+---
+
+Use the sidebar to navigate between pages and explore **how, why, and when** the model makes each decision.
 """)
 
-with st.expander("📂 About the Data"):
+with st.expander("📁 About the Data"):
     st.markdown("""
-This app uses the classic **Adult Census Income Dataset** (also known as the "Census Income" or `adult.data` dataset).
+This demo uses the **UCI Adult Income dataset**, a classic benchmark for classification tasks.
+Each sample represents an individual, described by attributes such as:
+- Age, education, occupation
+- Marital status, working hours, capital gains/losses
+- Sex, race, and country of origin
 
-- **Source**: UCI Machine Learning Repository  
-- **Task**: Predict whether an individual's income exceeds $50K/year  
-- **Features**: Includes demographic and work-related attributes (e.g., age, education, occupation, sex, hours-per-week, etc.)  
-- **Target**: Binary label — `>50K` or `<=50K`  
-- **Preprocessing**: Categorical features are label-encoded, missing values (`?`) are handled during cleaning
-
-This dataset is well-suited for testing explainability techniques due to its mix of numeric and categorical features.
+The goal is to predict:  
+> **Does this person earn >$50K per year?**
 """)
 
 with st.expander("⚙️ About the Algorithm"):
     st.markdown("""
-**XGBoost (Extreme Gradient Boosting)** is a high-performance implementation of gradient boosted decision trees. It's widely used in Kaggle competitions and industry for structured data tasks.
+We use **XGBoost**, a high-performance gradient boosting model widely adopted in industry for structured data.
 
-- **Boosting**: Combines weak learners (decision trees) iteratively, improving errors at each stage  
-- **Loss Optimization**: Uses gradient descent on a loss function (e.g. log-loss)  
-- **Regularization**: Includes L1/L2 penalties to reduce overfitting  
-- **Parallelizable**: Efficient training and inference  
+Why XGBoost?
+- 🚀 Fast and accurate
+- 🌲 Tree-based, great for interpretability
+- 🔍 Well-suited for SHAP explanations
 
-XGBoost is particularly interpretable thanks to:
-- Tree path tracing
-- SHAP values for feature attribution
-- Leaf-level voting and path support analysis
-
-This app leverages all these strengths, plus adds LLM-generated reasoning and audit layers.
+All predictions are enriched with **confidence scores**, **SHAP-based reasoning**, and **fairness metrics**.
 """)

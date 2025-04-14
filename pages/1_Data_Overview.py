@@ -6,7 +6,7 @@ st.set_page_config(layout="wide")
 
 from utils.data_loader import load_data, preprocess
 
-st.title("📄 Data Overview")
+st.title("Data Overview")
 # st.caption("Explore samples from the Census Income dataset and filter by label or feature values.")
 
 # === Load and preprocess data ===

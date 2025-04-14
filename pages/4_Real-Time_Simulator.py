@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from utils.counterfactuals import load_dice_explainer, generate_counterfactuals
 
 st.set_page_config(layout="wide")
-st.title("🎚 Real-Time Simulator")
+st.title("Real-Time Simulator")
 
 # === Load data and model ===
 df = load_data("data/adult.data")

@@ -18,7 +18,7 @@ from utils.interpret_utils import get_feature_path_ranges, get_used_features, ge
 #     load
 # )
 
-st.title("🔍 XAI Prediction Breakdown")
+st.title("XAI Prediction Breakdown")
 
 # === Load data and model ===
 df = load_data("data/adult.data")
@@ -59,7 +59,7 @@ confidence_report, confidence_level = get_confidence_report(
     pred_label
 )
 
-with st.expander("🔎 Model Confidence Report", expanded=True):
+with st.expander("📋 Model Confidence Report", expanded=True):
     st.subheader("How Confident Is the Model in Its Predictions?")
     st.markdown("""
 This report evaluates:

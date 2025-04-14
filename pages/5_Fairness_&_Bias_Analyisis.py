@@ -10,7 +10,7 @@ from utils.data_loader import load_data, preprocess, decode_features
 from utils.model_utils import load_model_and_explainer
 from sklearn.model_selection import train_test_split
 
-st.title("⚖️ Fairness & Biais Analyisis (Beta)")
+st.title("Fairness & Biais Analyisis (Beta)")
 st.markdown("### Data Quality Review")
 st.markdown("""
 This section audits your dataset to identify potential **data quality issues** that could introduce unfairness or instability in your model.
@@ -25,7 +25,7 @@ model, explainer = load_model_and_explainer(X, y)
 
 X_test_human["Label"] = y_test
 
-with st.expander("🧪 Data Integrity Checks"):
+with st.expander("📋 Data Integrity Checks"):
     st.subheader("Group Representation & Label Balance Review")
     st.markdown("""
 For each categorical feature, we examine:
@@ -65,7 +65,7 @@ These insights help validate that your data is diverse, representative, and read
             st.error(f"🚨 Some categories in `{cat_col}` only appear with one label:")
             st.dataframe(biased_values)
 
-
+st.divider()
 st.markdown("### Fairness Metrics")
 st.markdown("""
 This section explores how the model behaves across different **sensitive groups**, like `sex` or `race`.  
@@ -99,7 +99,7 @@ Large differences might indicate **unfair reliance** on certain features across 
 
 
     # === Prediction distribution by group ===
-    with st.expander("🔍 Prediction Distribution by Group"):
+    with st.expander("🔍 Model Prediction Distribution by Group"):
         st.subheader("Are Certain Groups More Likely to Receive a Positive or Negative Prediction?")
         st.markdown("""
 We look at how often the model predicts each class (e.g., >50K or <=50K) within each group.  

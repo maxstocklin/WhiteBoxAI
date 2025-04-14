@@ -27,7 +27,7 @@ from utils.feature_info import FEATURE_DESCRIPTIONS
 from pathlib import Path
 import json
 
-st.title("🏋️ Performance Dashboard")
+st.title("Performance Dashboard")
 # st.caption("Review how well the model is doing overall.")
 
 # === Train model ===
@@ -103,7 +103,7 @@ with st.expander("📈 Confusion Matrix", expanded=False):
 
 # ROC Curve
 if y_proba is not None:
-    with st.expander("🔥 ROC Curve & AUC"):
+    with st.expander("📐 ROC Curve & AUC Score"):
         st.subheader("Measures how well the model separates the two classes across thresholds.")
 
         st.markdown("""
@@ -191,7 +191,7 @@ This view breaks down a single prediction to show which features pushed the pred
 
 
 
-with st.expander("🧮 Feature Interaction Explorer"):
+with st.expander("🧬 Feature Interaction Explorer"):
     st.subheader("How Features Work *Together* to Influence Predictions")
     st.markdown("""
 While most explanations focus on individual features, this view explores how **two features combined** impact the model.  
