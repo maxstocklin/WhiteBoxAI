@@ -24,7 +24,8 @@ data_view["True Label"] = y_test
 
 # === Filters ===
 with st.expander("🔍 Filter Options", expanded=False):
-    st.markdown("Use filters to narrow down the dataset view. This helps focus your analysis on specific groups or conditions.")
+    st.subheader("Use filters to narrow down the dataset view.")
+    st.markdown("This tool helps focus your analysis on specific groups or conditions.")
     # Create two columns for numeric and categorical filters
     col_num, col_cat = st.columns(2)
 

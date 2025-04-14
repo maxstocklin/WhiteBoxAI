@@ -20,8 +20,8 @@ elif selection == "🔍 XAI Prediction Breakdown":
 elif selection == "🧪 Real-Time Simulator":
     st.switch_page("pages/4_Real-Time_Simulator.py")
 
-elif selection == "⚖️ Fairness & Biais Analyisis":
-    st.switch_page("pages/5_Fairness_&_Biais_Analyisis.py")
+elif selection == "⚖️ Fairness & Bias Analyisis":
+    st.switch_page("pages/5_Fairness_&_Bias_Analyisis.py")
 
 
 st.title("👋 Welcome to WhiteBox AI")
@@ -35,7 +35,7 @@ You’ll find a suite of pages, each tailored to a specific exploration task:
 - 🏋️‍♂️ **Performance Dashboard**: Evaluate model performance and explore global feature importance.
 - 🔬 **XAI Prediction Breakdown**: Deep-dive into a single prediction with a multi-layered confidence report, detailed reasoning report, and a natural language summary.
 - 🎚 **Real-Time Simulator**: Adjust input features and see how predictions shift. Try counterfactuals, feature tweaking, and SHAP comparisons.
-- ⚖️ **Fairness & Biais Analyisis**: Investigate bias across sensitive attributes like sex and race. Includes fairness metrics and SHAP attribution by group.
+- ⚖️ **Fairness & Bias Analyisis**: Investigate bias across sensitive attributes like sex and race. Includes fairness metrics and SHAP attribution by group.
 
 Use the sidebar to navigate between these pages and uncover what drives each prediction.
 """)

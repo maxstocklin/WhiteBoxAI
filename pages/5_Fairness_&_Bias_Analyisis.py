@@ -11,11 +11,9 @@ from utils.model_utils import load_model_and_explainer
 from sklearn.model_selection import train_test_split
 
 st.title("⚖️ Fairness & Biais Analyisis (Beta)")
-st.info("""
-This report includes:
-- Feature impact disparities
-- Prediction distribution analysis
-- Ground truth vs prediction parity metrics
+st.markdown("### Data Quality Review")
+st.markdown("""
+This section audits your dataset to identify potential **data quality issues** that could introduce unfairness or instability in your model.
 """)
 
 # === Load data, model, and SHAP explainer ===
@@ -30,8 +28,6 @@ X_test_human["Label"] = y_test
 with st.expander("🧪 Data Integrity Checks"):
     st.subheader("Group Representation & Label Balance Review")
     st.markdown("""
-This section audits your dataset to identify potential **data quality issues** that could introduce unfairness or instability in your model.
-
 For each categorical feature, we examine:
 - 🧮 How each group is distributed across the target labels
 - ⚠️ Whether any category has **too few samples**
