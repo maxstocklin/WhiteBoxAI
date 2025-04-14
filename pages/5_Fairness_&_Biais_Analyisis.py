@@ -10,7 +10,13 @@ from utils.data_loader import load_data, preprocess, decode_features
 from utils.model_utils import load_model_and_explainer
 from sklearn.model_selection import train_test_split
 
-st.title("⚖️ Biais Dashboard")
+st.title("⚖️ Fairness & Biais Analyisis (Beta)")
+st.info("""
+This report includes:
+- Feature impact disparities
+- Prediction distribution analysis
+- Ground truth vs prediction parity metrics
+""")
 
 # === Load data, model, and SHAP explainer ===
 df = load_data("data/adult.data")
@@ -22,7 +28,19 @@ model, explainer = load_model_and_explainer(X, y)
 X_test_human["Label"] = y_test
 
 with st.expander("🧪 Data Integrity Checks"):
-    st.markdown("#### 📊 Category vs. Label Crosstab")
+    st.subheader("Group Representation & Label Balance Review")
+    st.markdown("""
+This section audits your dataset to identify potential **data quality issues** that could introduce unfairness or instability in your model.
+
+For each categorical feature, we examine:
+- 🧮 How each group is distributed across the target labels
+- ⚠️ Whether any category has **too few samples**
+- 🚨 Whether any category appears **only in one class**, which may signal **data leakage or bias**
+
+These insights help validate that your data is diverse, representative, and ready for responsible modeling.
+""")
+
+    st.markdown("#### Category vs. Label Crosstab")
     label_map = {0: "<=50K", 1: ">50K"}
     X_test_human["Label_Name"] = X_test_human["Label"].map(label_map)
 
@@ -52,14 +70,25 @@ with st.expander("🧪 Data Integrity Checks"):
             st.dataframe(biased_values)
 
 
+st.markdown("### Fairness Metrics")
+st.markdown("""
+This section explores how the model behaves across different **sensitive groups**, like `sex` or `race`.  
+We compare:
+- How the model treats each group
+- Whether prediction outcomes are balanced
+- If the model introduces or reduces bias compared to the real-world data
+""")
 
-st.markdown("### 📊 Fairness Metrics")
-sensitive_attr = st.pills("Choose sensitive feature", options=["sex", "race"])
+sensitive_attr = st.pills("Select a sensitive attribute to begin:", options=["sex", "race"])
 
 if sensitive_attr:
     # === SHAP disparity by group ===
-    with st.expander("📊 SHAP Value Disparities"):
-
+    with st.expander("📊 Feature Impact Disparities by Group"):
+        st.subheader("Does the Model Rely on Features Differently for Each Group?")
+        st.markdown("""
+This chart shows how much each feature contributes to the model’s decisions, **on average**, for each group.  
+Large differences might indicate **unfair reliance** on certain features across groups.
+""")
         with st.spinner("Calculating SHAP values..."):
             shap_vals = explainer.shap_values(X_test)
             shap_df = pd.DataFrame(shap_vals, columns=X.columns)
@@ -74,7 +103,12 @@ if sensitive_attr:
 
 
     # === Prediction distribution by group ===
-    with st.expander("🔍 Prediction Distribution"):
+    with st.expander("🔍 Prediction Distribution by Group"):
+        st.subheader("Are Certain Groups More Likely to Receive a Positive or Negative Prediction?")
+        st.markdown("""
+We look at how often the model predicts each class (e.g., >50K or <=50K) within each group.  
+Disparities in these rates could point to **imbalanced treatment**.
+""")
 
         preds = model.predict(X_test)
         X_test_human["Prediction"] = preds
@@ -100,12 +134,24 @@ if sensitive_attr:
 
 
 
-    with st.expander("📐 Fairness Metrics: Prediction vs. Ground Truth"):
+    with st.expander("📐 Group-Wise Fairness Metrics"):
+        st.subheader("Comparing Predictions vs. Reality")
+        st.markdown("""
+We compare two things:
+
+- **Actual Disparity**: How different the real-world outcomes are across groups.
+- **Model Disparity**: How different the model’s predictions are across those same groups.
+
+We use this to detect if the model:
+- 🔴 Introduced bias
+- 🔵 Reduced real-world disparity
+- 🟢 Matched the real-world data (neutral)
+""")
 
         col1, col2 = st.columns(2)
 
         with col1:
-            st.markdown("#### 🏷️ Actual Disparity")
+            st.markdown("#### Actual Disparity")
             group_label_rate = X_test_human.groupby(sensitive_attr)["Label"].mean()
             group_label_rate_display = group_label_rate.apply(lambda x: f"{x:.2%}")
             label_diff = group_label_rate.max() - group_label_rate.min()
@@ -121,7 +167,7 @@ if sensitive_attr:
                 st.success("✅ Low disparity in actual labels.")
 
         with col2:
-            st.markdown("#### 🔮 Model Predictions")
+            st.markdown("#### Model Predictions")
             preds = model.predict(X_test)
             X_test_human["Prediction"] = preds
             group_pred_rate = X_test_human.groupby(sensitive_attr)["Prediction"].mean()
@@ -139,7 +185,7 @@ if sensitive_attr:
                 st.success("✅ Low disparity.")
 
         # === Comparison Summary: Model vs. Ground Truth ===
-        st.subheader("📉 Disparity Comparison Summary")
+        st.subheader("Disparity Comparison Summary")
 
         if dp_diff > label_diff * 1.2:
             st.error("⚠️ The model's prediction disparity is higher than the label disparity — potential bias introduced.")
@@ -147,3 +193,5 @@ if sensitive_attr:
             st.info("ℹ️ The model has reduced the disparity compared to the ground truth — possible bias mitigation.")
         else:
             st.success("✅ The model's disparity matches the ground truth.")
+
+

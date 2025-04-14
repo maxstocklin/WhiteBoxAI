@@ -5,7 +5,17 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
-from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve
+from sklearn.metrics import (
+    classification_report, 
+    confusion_matrix, 
+    roc_auc_score, 
+    roc_curve, 
+    accuracy_score, 
+    precision_score, 
+    recall_score, 
+    f1_score
+
+)
 import shap
 
 st.set_page_config(layout="wide")
@@ -17,7 +27,8 @@ from utils.feature_info import FEATURE_DESCRIPTIONS
 from pathlib import Path
 import json
 
-st.title("🏋️ Train / Test / Visualize")
+st.title("🏋️ Performance Dashboard")
+# st.caption("Review how well the model is doing overall.")
 
 # === Train model ===
 @st.cache_resource(show_spinner=True)
@@ -25,62 +36,6 @@ def train_model(X_train, y_train):
     model = XGBClassifier(use_label_encoder=False, eval_metric='logloss')
     model.fit(X_train, y_train)
     return model
-
-# === Plot and print evaluation ===
-def plot_metrics_st(y_true, y_pred, y_proba=None):
-    # Classification Report
-    report = classification_report(y_true, y_pred, output_dict=True, target_names=["<=50K", ">50K"])
-    st.subheader("🔍 Classification Report")
-    st.dataframe(pd.DataFrame(report).transpose())
-
-
-    # Confusion Matrix
-    with st.expander("📉 Confusion Matrix"):
-        cm = confusion_matrix(y_true, y_pred)
-        fig_cm, ax = plt.subplots()
-        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
-                    xticklabels=["<=50K", ">50K"],
-                    yticklabels=["<=50K", ">50K"],
-                    ax=ax)
-        ax.set_xlabel("Predicted")
-        ax.set_ylabel("Actual")
-        ax.set_title("Confusion Matrix")
-        st.pyplot(fig_cm)
-
-    # ROC Curve
-    if y_proba is not None:
-        with st.expander("🔥 ROC Curve & AUC"):
-            fpr, tpr, _ = roc_curve(y_true, y_proba)
-            auc = roc_auc_score(y_true, y_proba)
-            fig_roc, ax = plt.subplots()
-            ax.plot(fpr, tpr, label=f"AUC = {auc:.3f}")
-            ax.plot([0, 1], [0, 1], linestyle="--", color="gray")
-            ax.set_title("ROC Curve")
-            ax.set_xlabel("False Positive Rate")
-            ax.set_ylabel("True Positive Rate")
-            ax.legend()
-            st.pyplot(fig_roc)
-            st.metric("ROC AUC", f"{auc:.3f}")
-
-    with st.expander("🧠 Feature Correlation Matrix"):
-
-        mode = st.pills("Correlation type", ["Raw feature values", "SHAP values"], help="Features highly correlated with the label are likely to be strong predictors — but may require scrutiny for fairness or leakage.")
-
-        if mode == "Raw feature values":
-            X_corr = X_train.copy()
-            X_corr["Label"] = y_train
-            corr_matrix = X_corr.corr()
-
-        else:
-            explainer = shap.TreeExplainer(model)
-            shap_vals = explainer.shap_values(X_train)
-            X_corr = pd.DataFrame(shap_vals, columns=X_train.columns).copy()
-            X_corr["Label"] = y_train
-            corr_matrix = X_corr.corr()
-
-        fig, ax = plt.subplots(figsize=(10, 8))
-        sns.heatmap(corr_matrix, cmap="coolwarm", annot=False, square=True, ax=ax, vmin=-1, vmax=1)
-        st.pyplot(fig)
 
 # === Load, preprocess, split ===
 df = load_data("data/adult.data")
@@ -91,18 +46,135 @@ model = train_model(X_train, y_train)
 # === Evaluation ===
 y_pred = model.predict(X_test)
 y_proba = model.predict_proba(X_test)[:, 1]
-plot_metrics_st(y_test, y_pred, y_proba)
+
+# Classification Report
+report = classification_report(y_test, y_pred, output_dict=True, target_names=["<=50K", ">50K"])
+accuracy = accuracy_score(y_test, y_pred) * 100
+precision = precision_score(y_test, y_pred) * 100
+recall = recall_score(y_test, y_pred) * 100
+f1 = f1_score(y_test, y_pred) * 100
+
+with st.expander("📊 Classification Report", expanded=True):
+    st.subheader("Performance-wise Metrics")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("### 🎯 **Accuracy**")
+        st.markdown("_How often the model was right overall._")
+        st.markdown(f"<h2 style='color:#4CAF50'>{accuracy:.2f}%</h2>", unsafe_allow_html=True)
+
+        st.markdown("")
+        st.markdown("")
+        st.markdown("")
+        st.markdown("### 📏 **Precision**")
+        st.markdown("_Of the ones we said were positive, how many really were?_")
+        st.markdown(f"<h2 style='color:#2196F3'>{precision:.2f}%</h2>", unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("### 🔁 **Recall**")
+        st.markdown("_Of all the actual positives, how many did we find?_")
+        st.markdown(f"<h2 style='color:#FFC107'>{recall:.2f}%</h2>", unsafe_allow_html=True)
+
+        st.markdown("")
+        st.markdown("")
+        st.markdown("")
+        st.markdown("### ⚖️ **F1 Score**")
+        st.markdown("_A balance between precision and recall._")
+        st.markdown(f"<h2 style='color:#9C27B0'>{f1:.2f}%</h2>", unsafe_allow_html=True)
+
+    st.markdown("---")
+    st.info("✅ **Tip:** Use **precision** when false alarms are bad (e.g., fraud detection), and **recall** when missing real cases is worse (e.g., disease diagnosis).")
+
+with st.expander("📈 Confusion Matrix", expanded=False):
+    # Confusion Matrix
+    st.subheader("See how often the model predicts correctly vs. mistakenly — split by actual and predicted labels.")
+
+    st.markdown("""The confusion matrix shows how well the model distinguishes between the two classes:""")
+
+    cm = confusion_matrix(y_test, y_pred)
+    fig_cm, ax = plt.subplots()
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
+                xticklabels=["<=50K", ">50K"],
+                yticklabels=["<=50K", ">50K"],
+                ax=ax)
+    ax.set_xlabel("Predicted Label")
+    ax.set_ylabel("Actual Label")
+    ax.set_title("Confusion Matrix")
+    st.pyplot(fig_cm)
+
+# ROC Curve
+if y_proba is not None:
+    with st.expander("🔥 ROC Curve & AUC"):
+        st.subheader("Measures how well the model separates the two classes across thresholds.")
+
+        st.markdown("""
+    The ROC curve shows how well the model separates the two classes.  
+    AUC (Area Under the Curve) summarizes this into a single score — the closer to **1.0**, the better.
+    """)
+
+        fpr, tpr, _ = roc_curve(y_test, y_proba)
+        auc = roc_auc_score(y_test, y_proba)
+        fig_roc, ax = plt.subplots()
+        ax.plot(fpr, tpr, label=f"AUC = {auc:.3f}")
+        ax.plot([0, 1], [0, 1], linestyle="--", color="gray")
+        ax.set_title("ROC Curve")
+        ax.set_xlabel("False Positive Rate")
+        ax.set_ylabel("True Positive Rate")
+        ax.legend()
+        st.pyplot(fig_roc)
+        st.metric("ROC AUC", f"{auc:.3f}")
+
+with st.expander("🔗 Feature Correlation Matrix"):
+    st.subheader("Check relationships between features, or between features and the target.")
+    st.markdown("""
+This heatmap shows how features are correlated with each other and with the label.  
+- High correlation between features may suggest redundancy (multicollinearity).  
+- High correlation with the label may indicate strong predictors — or risks like bias or data leakage.
+""")
+
+    X_corr = X_train.copy()
+    X_corr["Label"] = y_train
+    corr_matrix = X_corr.corr()
+
+    # mode = st.pills("Correlation type", ["Raw feature values", "SHAP values"], help="Features highly correlated with the label are likely to be strong predictors — but may require scrutiny for fairness or leakage.")
+
+    # if mode == "Raw feature values":
+    #     X_corr = X_train.copy()
+    #     X_corr["Label"] = y_train
+    #     corr_matrix = X_corr.corr()
+
+    # else:
+    #     explainer = shap.TreeExplainer(model)
+    #     shap_vals = explainer.shap_values(X_train)
+    #     X_corr = pd.DataFrame(shap_vals, columns=X_train.columns).copy()
+    #     X_corr["Label"] = y_train
+    #     corr_matrix = X_corr.corr()
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sns.heatmap(corr_matrix, cmap="coolwarm", annot=False, square=True, ax=ax, vmin=-1, vmax=1)
+    st.pyplot(fig)
 
 # === SHAP ===
-with st.expander("🌲 SHAP Summary Plot"):
+with st.expander("🌍 Overall Feature Impact", expanded=False):
+    st.subheader("Which Features Influence the Model Most?")
+    st.markdown("""
+This chart shows the overall importance of each feature across all predictions.  
+""")
+
     explainer = shap.TreeExplainer(model)
     shap_values = explainer.shap_values(X_test)
+
     fig_shap, ax = plt.subplots()
     shap.summary_plot(shap_values, X_test, plot_type="bar", show=False)
     st.pyplot(fig_shap)
 
+
 # === SHAP Force Plots ===
-with st.expander("💥 SHAP Force Plot (Single Prediction)"):
+with st.expander("📍 Local Feature Impact", expanded=False):
+    st.subheader("What Drove a Specific Prediction?")
+    st.markdown("""
+This view breaks down a single prediction to show which features pushed the prediction score higher or lower.  
+""")
+
     sample_idx = st.slider("Select Sample Index", 0, len(X_test) - 1, 0)
 
     shap.force_plot(
@@ -113,10 +185,17 @@ with st.expander("💥 SHAP Force Plot (Single Prediction)"):
         matplotlib=True
     )
 
-    fig = plt.gcf()  # Get the SHAP-created matplotlib figure
+    fig = plt.gcf()
     st.pyplot(fig)
 
-with st.expander("🔍 Interaction Explorer"):
+
+
+
+with st.expander("🧮 Feature Interaction Explorer"):
+    st.subheader("How Features Work *Together* to Influence Predictions")
+    st.markdown("""
+While most explanations focus on individual features, this view explores how **two features combined** impact the model.  
+""")
 
     LOG_DIR = Path("logs/interactions_explorer")
     LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -169,6 +248,7 @@ with st.expander("🔍 Interaction Explorer"):
         binned_cache = LOG_DIR / f"binned_{selected_feature}_{selected_pair}.json"
         llm_cache = LOG_DIR / f"llm_{selected_feature}_{selected_pair}.txt"
 
+
         if binned_cache.exists() and llm_cache.exists():
             try:
                 binned_df = pd.read_json(binned_cache, orient="records")
@@ -218,8 +298,15 @@ with st.expander("🔍 Interaction Explorer"):
 
         if not binned_df.empty:
             st.subheader(
-                f"📊 Interaction of {selected_feature.title().replace('_', ' ')} with {selected_pair.title().replace('_', ' ')}", 
+                f"Interaction of {selected_feature.title().replace('_', ' ')} with {selected_pair.title().replace('_', ' ')}", 
                 help=f"{selected_feature.title().replace('_', ' ')} = {FEATURE_DESCRIPTIONS[selected_feature]} | {selected_pair.title().replace('_', ' ')} = {FEATURE_DESCRIPTIONS[selected_pair]}")
+            st.markdown(f"""
+            The chart below shows how the **combined effect** of **{selected_feature.replace('_', ' ').title()}** and  
+            **{selected_pair.replace('_', ' ').title()}** influences model predictions across different groups of **{selected_pair.replace('_', ' ').title()}**.
+
+            _Powered by Mistral._
+            """)
+
             fig, ax = plt.subplots(figsize=(8, 5))
             ax.bar(binned_df.iloc[:, 0].astype(str), binned_df["Interaction"], color="skyblue")
             ax.axhline(0, color="gray", linestyle="--")
@@ -241,5 +328,5 @@ with st.expander("🔍 Interaction Explorer"):
 
             summary = describe_interaction(selected_feature, selected_pair, binned_df)
 
-            st.subheader("🧠 LLM Insight")
+            st.subheader("LLM Insights")
             st.markdown(explanation)

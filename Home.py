@@ -8,20 +8,20 @@ st.set_page_config(
 
 selection = ""
 # Page router
-if selection == "📄 Dataset Viewer":
-    st.switch_page("pages/1_Dataset_Viewer.py")
+if selection == "📄 Data Overview":
+    st.switch_page("pages/1_Data_Overview.py")
 
-elif selection == "🏋️ Train / Test / Visualize":
-    st.switch_page("pages/2_Train_Test_Visualize.py")
+elif selection == "🏋️ Performance Dashboard":
+    st.switch_page("pages/2_Performance_Dashboard.py")
 
-elif selection == "🔍 Interpretation":
-    st.switch_page("pages/3_Interpretation.py")
+elif selection == "🔍 XAI Prediction Breakdown":
+    st.switch_page("pages/3_XAI_Prediction_Breakdown.py")
 
-elif selection == "🧪 Simulator":
-    st.switch_page("pages/4_Simulator.py")
+elif selection == "🧪 Real-Time Simulator":
+    st.switch_page("pages/4_Real-Time_Simulator.py")
 
-elif selection == "⚖️ Biais Dashboard":
-    st.switch_page("pages/5_Biais_Dashboard.py")
+elif selection == "⚖️ Fairness & Biais Analyisis":
+    st.switch_page("pages/5_Fairness_&_Biais_Analyisis.py")
 
 
 st.title("👋 Welcome to WhiteBox AI")
@@ -31,16 +31,16 @@ This tool is designed to help **everyone** — data scientists, domain experts, 
 
 You’ll find a suite of pages, each tailored to a specific exploration task:
 
-- 🏋️‍♂️ **Train / Test / Visualize**: Evaluate model performance and explore global feature importance.
-- 📄 **Dataset Viewer**: Browse test samples with filtering and direct links to interpretation.
-- 🔬 **Sample Interpretation**: Deep-dive into a single prediction with a multi-layered confidence report, SHAP values, and a natural language summary.
-- 🎛️ **Prediction Simulator**: Adjust input features and see how predictions shift. Try counterfactuals, feature tweaking, and SHAP comparisons.
-- ⚖️ **Fairness Dashboard**: Investigate bias across sensitive attributes like sex and race. Includes fairness metrics and SHAP attribution by group.
+- 📄 **Data Overview**: Browse test samples with filtering and direct links to interpretation.
+- 🏋️‍♂️ **Performance Dashboard**: Evaluate model performance and explore global feature importance.
+- 🔬 **XAI Prediction Breakdown**: Deep-dive into a single prediction with a multi-layered confidence report, detailed reasoning report, and a natural language summary.
+- 🎚 **Real-Time Simulator**: Adjust input features and see how predictions shift. Try counterfactuals, feature tweaking, and SHAP comparisons.
+- ⚖️ **Fairness & Biais Analyisis**: Investigate bias across sensitive attributes like sex and race. Includes fairness metrics and SHAP attribution by group.
 
 Use the sidebar to navigate between these pages and uncover what drives each prediction.
 """)
 
-with st.expander("📂 Dataset — About the Data"):
+with st.expander("📂 About the Data"):
     st.markdown("""
 This app uses the classic **Adult Census Income Dataset** (also known as the "Census Income" or `adult.data` dataset).
 
@@ -53,7 +53,7 @@ This app uses the classic **Adult Census Income Dataset** (also known as the "Ce
 This dataset is well-suited for testing explainability techniques due to its mix of numeric and categorical features.
 """)
 
-with st.expander("⚙️ Algorithm — About XGBoost"):
+with st.expander("⚙️ About the Algorithm"):
     st.markdown("""
 **XGBoost (Extreme Gradient Boosting)** is a high-performance implementation of gradient boosted decision trees. It's widely used in Kaggle competitions and industry for structured data tasks.
 

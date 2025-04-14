@@ -6,7 +6,8 @@ st.set_page_config(layout="wide")
 
 from utils.data_loader import load_data, preprocess
 
-st.title("📄 Dataset Viewer")
+st.title("📄 Data Overview")
+# st.caption("Explore samples from the Census Income dataset and filter by label or feature values.")
 
 # === Load and preprocess data ===
 df = load_data("data/adult.data")
@@ -23,6 +24,7 @@ data_view["True Label"] = y_test
 
 # === Filters ===
 with st.expander("🔍 Filter Options", expanded=False):
+    st.markdown("Use filters to narrow down the dataset view. This helps focus your analysis on specific groups or conditions.")
     # Create two columns for numeric and categorical filters
     col_num, col_cat = st.columns(2)
 
@@ -34,8 +36,17 @@ with st.expander("🔍 Filter Options", expanded=False):
     with col_num:
         st.markdown("#### Numeric Filters")
         for col in num_cols:
+            if col in ["True Label"]:
+                continue
+            if data_view[col].dropna().empty:
+                st.warning(f"⚠️ No data available for column '{col}' after applying previous filters.")
+                continue  # Skip this filter
             min_val = int(data_view[col].min())
             max_val = int(data_view[col].max())
+            if min_val == max_val:
+                st.info(f"ℹ️ All remaining rows have the same value `{min_val}` for `{col}`. Skipping slider.")
+                continue
+
             user_range = st.slider(
                 f"Select range for {col}",
                 min_value=min_val,
@@ -44,7 +55,6 @@ with st.expander("🔍 Filter Options", expanded=False):
             )
             data_view = data_view[(data_view[col] >= user_range[0]) & (data_view[col] <= user_range[1])]
         st.markdown("#### True Label")
-
         class_filter = st.selectbox("Filter by true label", options=["All", 0, 1], index=0)
         if class_filter != "All":
             data_view = data_view[data_view["True Label"] == class_filter]
@@ -70,7 +80,8 @@ data_view.reset_index(inplace=True)
 # )
 
 # === Show table using st.dataframe with clickable links ===
-st.subheader("🧠 Dataset Table with Interpret Links")
+st.subheader("Census Income Dataset")
+st.markdown("You are viewing a sample from the U.S. Census dataset. Each row is a person, and the label shows whether they earn >50K or not.")
 st.dataframe(
     data_view[["index", "True Label"] + list(X.columns)],
     # column_config={

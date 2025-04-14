@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from utils.counterfactuals import load_dice_explainer, generate_counterfactuals
 
 st.set_page_config(layout="wide")
-st.title("🎛️ Prediction Simulator")
+st.title("🎚 Real-Time Simulator")
 
 # === Load data and model ===
 df = load_data("data/adult.data")
@@ -41,7 +41,14 @@ original_human = X_test_human.iloc[sample_index]
 
 true_label = y_test[sample_index]
 
-with st.expander("🌀 Counterfactual Explanations"):
+with st.expander("🔁 Flip-the-Prediction Generator", expanded=True):
+    st.subheader("What Small Change Could Flip the Prediction?")
+    st.markdown("""
+This tool explores **realistic, minimal changes** to the input that would cause the model to make a **different decision**.  
+It helps reveal what factors are **most critical** in shaping the prediction — and how flexible the outcome is.
+
+_Powered by DiCE._
+""")
 
     with st.spinner("Loading counterfactual engine..."):
         cf_explainer = load_dice_explainer(model, X_train, y_train)
@@ -123,9 +130,14 @@ with st.expander("🌀 Counterfactual Explanations"):
 
 
 
-with st.expander("🎛 Adjust Sample Inputs"):
-    st.markdown("Edit the sample below to simulate a different prediction.")
-    
+with st.expander("🔧 Feature Control Lab"):
+    st.subheader("Adjust Inputs Features to Simulate a New Scenario")
+    st.markdown("""
+This tool lets you **manually adjust input values** to explore how the model reacts.  
+Use this panel to answer:  
+_"What if this person had a different education level, or worked more hours?"_
+""")
+
     col1, col2 = st.columns(2)
     with col1:
         if "constraint_mode" not in st.session_state:
@@ -220,7 +232,14 @@ delta_df = pd.DataFrame({
     "Δ SHAP": delta_shap
 }).sort_values("Δ SHAP", key=abs, ascending=False)
 
-with st.expander("🔎 Top SHAP Differences"):
+with st.expander("🔍 Feature Impact Tracker"):
+    st.subheader("How Did Your Changes Influence the Prediction?")
+    st.markdown("""
+This section tracks how your edits impacted the model's decision:  
+- See which features had the biggest impact change
+- Review the exact values you modified
+- Detect if the outcome flipped — and why
+""")
 
     fig, ax = plt.subplots(figsize=(6, 3))
     delta_df.set_index("Feature")["Δ SHAP"].plot(kind="barh", color="skyblue", ax=ax)
@@ -232,7 +251,7 @@ with st.expander("🔎 Top SHAP Differences"):
 
 
     # === Delta View ===
-    st.subheader("📊 Feature Differences")
+    st.subheader("Feature Differences")
 
     diffs = []
     for col in X.columns:

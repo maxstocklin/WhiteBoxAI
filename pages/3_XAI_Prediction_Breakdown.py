@@ -18,7 +18,7 @@ from utils.interpret_utils import get_feature_path_ranges, get_used_features, ge
 #     load
 # )
 
-st.title("🔍 Sample Interpretation")
+st.title("🔍 XAI Prediction Breakdown")
 
 # === Load data and model ===
 df = load_data("data/adult.data")
@@ -39,7 +39,7 @@ if sample_index >= len(X_test):
     st.error(f"❌ Invalid sample index: {sample_index}. Max allowed is {len(X_test) - 1}.")
     st.stop()
 
-st.markdown(f"Interpreting sample ID: `{sample_index}`")
+st.markdown(f"### Interpreting sample ID: `{sample_index}`")
 
 # === Use encoded for modeling, decoded for display
 sample_df_encoded = X_test.iloc[[sample_index]]
@@ -60,13 +60,24 @@ confidence_report, confidence_level = get_confidence_report(
 )
 
 with st.expander("🔎 Model Confidence Report", expanded=True):
+    st.subheader("How Confident Is the Model in Its Predictions?")
+    st.markdown("""
+This report evaluates:
+- **Confidence**: How strongly the model believes in its prediction
+- **Familiarity**: Whether the input looks similar to what it has seen during training
+- **Consistency**: Whether the logic aligns with how the model behaves in general
+""")
+
+    st.dataframe(confidence_report)
     st.markdown(f"**Overall Confidence Level:** {confidence_level}")
-    st.dataframe(confidence_report, use_container_width=True)
 
 # === Cache path
 cache_path = Path(f"logs/explanations/sample_{sample_index}.json")
 
-with st.expander("📂 Feature-Level Explanation", expanded=False):
+with st.expander("🧩 Feature-Level Explanation", expanded=False):
+    st.subheader("What Drove the Model’s Decision?")
+    st.markdown("See which feature values mattered most, how flexible the model is around them, and how they pushed the prediction.")
+
     feature_ranges = get_feature_path_ranges(model, sample_df_encoded, encoders, categorical_columns)
 
     used_features = list(feature_ranges.keys())
@@ -84,9 +95,29 @@ with st.expander("📂 Feature-Level Explanation", expanded=False):
         encoders,
         categorical_columns
     )
-    st.dataframe(summary_df, use_container_width=True)
+    class_names = {0: "≤50K", 1: ">50K"}
+    pred_class_name = class_names.get(pred_label, f"class {pred_label}")
 
-with st.expander("🧠 Assistant Assessment by Mistral", expanded=False):
+    # Rename and clean columns for clarity
+    rename_dict = {
+        "Value": "Actual Value",
+        # "Z-Score (vs class)": "Z-Score (vs Class Avg)",
+        "Z-Score (vs class)": None ,
+        "Tree Range": "Values Range with Similar Model Prediction",
+        "% Class in Range": f"% of {pred_class_name} Samples in Range",
+        "% in Range = Class": f"% of Samples in Range Matching {pred_class_name}",
+        "SHAP": "Impact on Prediction (SHAP)",
+        "Used in Trees": None 
+    }
+
+    summary_df = summary_df.rename(columns={k: v for k, v in rename_dict.items() if v})
+    summary_df = summary_df[[v for v in rename_dict.values() if v]]  # Keep only renamed columns
+    st.dataframe(summary_df)
+
+with st.expander("💡 LLM Reasoning Summary (Mistral)", expanded=False):
+    st.markdown(f"""
+_Powered by Mistral._
+""")
 
     # === Cached or generate?
     if cache_path.exists():

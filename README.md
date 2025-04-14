@@ -53,7 +53,7 @@ This page provides an overview of model performance and global explainability:
 - Bottom sticky bar: summarizes true vs predicted label and confidence, with animated color transitions when label flips
 
 
-### 🎛️ Prediction Simulator
+### 🎚 Prediction Simulator
 - Compare original vs. adjusted predictions side-by-side
 - Live edit any feature value — including categorical and numerical fields
 - Bottom sticky bar summarizes prediction shift with animated color indicator
