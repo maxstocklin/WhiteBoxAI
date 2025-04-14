@@ -28,18 +28,21 @@ st.title("Welcome to WhiteBox AI")
 
 st.markdown("""
 WhiteBox AI is an interactive tool designed to help you **understand how machine learning models make decisions**.
+
+We go beyond accuracy. WhiteBox AI adds **explainability layers** to every prediction, helping:
+
+- Data scientists explore model behavior  
+- Domain experts understand feature influence  
+- Decision makers gain confidence in AI-driven outcomes
 """)
+st.markdown("")
+
 st.info("""
 In this demo, we use **XGBoost** — one of the most powerful algorithms for tabular data — to solve a simple but meaningful task:
 
 > 🎯 **Can we predict whether someone earns more than $50K/year based on their personal and professional profile?**
 """)
 st.markdown("""
-
-We go beyond accuracy. WhiteBox AI adds **explainability layers** to every prediction, helping:
-- Data scientists explore model behavior
-- Domain experts understand feature influence
-- Decision makers build trust in AI
 
 ---
 
