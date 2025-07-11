@@ -486,3 +486,241 @@ def get_confidence_report(model, X_train, y_train, sample_df, pred_label):
 #             feature_ranges[feat]["categories"] = sorted(list(feature_ranges[feat]["categories"]))
 
 #     return feature_ranges
+
+
+
+
+
+
+
+
+
+
+"""
+import numpy as np
+import pandas as pd
+from xgboost import DMatrix
+from collections import defaultdict
+
+def percentile_score(value, reference_distribution, thresholds=(0.90, 0.98), reverse=False):
+    ref = np.asarray(reference_distribution)
+    if reverse:
+        p = (ref > value).mean()
+    else:
+        p = (ref < value).mean()
+    if p > thresholds[1]:
+        return "❌"
+    elif p > thresholds[0]:
+        return "⚠️"
+    else:
+        return "✅"
+
+def get_confidence_report(model, X_train, y_train, sample_df, pred_label):
+    sample = sample_df.iloc[0]
+    confidence_factors = []
+
+    # === 🔮 Prediction probability ===
+    proba = model.predict_proba(sample_df)[0][1]
+    proba_score = percentile_score(abs(proba - 0.5), np.abs(model.predict_proba(X_train)[:, 1] - 0.5),
+                                   thresholds=(0.3, 0.15), reverse=False)
+    confidence_factors.append(("🔮 Prediction Probability", f"{proba:.2%}", proba_score))
+
+    # === 📦 Category familiarity ===
+    cat_status = "✅"
+    cat_message = "Passed all tests"
+    for col in sample_df.columns:
+        if str(sample_df[col].dtype) == "object":
+            if sample[col] not in X_train[col].unique():
+                cat_status = "❌"
+                cat_message = f"Unseen category in '{col}': {sample[col]}"
+                break
+            freq = (X_train[col] == sample[col]).mean()
+            if freq < 0.02 and cat_status != "❌":
+                cat_status = "⚠️"
+                cat_message = f"Rare category in '{col}': {sample[col]}, freq: {freq:.2%}"
+    confidence_factors.append(("📦 Category Familiarity", cat_message, cat_status))
+
+    # === 🌍 Distance to Training Samples ===
+    distances = np.linalg.norm(X_train - sample_df.values, axis=1)
+    avg_dist = distances.mean()
+    train_dists = np.linalg.norm(X_train[:, np.newaxis] - X_train, axis=2).mean(axis=1)
+    dist_score = percentile_score(avg_dist, train_dists, thresholds=(0.90, 0.98), reverse=True)
+    confidence_factors.append(("🌍 Distance to Training Samples", f"{avg_dist:.2f}", dist_score))
+
+    # === 🧨 Z-score anomalies ===
+    z_alert = "✅"
+    z_messages = []
+    num_cols = X_train.select_dtypes("number").columns
+    for col in num_cols:
+        std = X_train[col].std()
+        if std == 0:
+            continue
+        z_val = (sample[col] - X_train[col].mean()) / std
+        z_vals_train = ((X_train[col] - X_train[col].mean()) / std).abs()
+        z_score = percentile_score(abs(z_val), z_vals_train, thresholds=(0.90, 0.98), reverse=False)
+        if z_score != "✅":
+            z_messages.append(f"{col}: {z_val:.2f} ({z_score})")
+            if z_score == "❌":
+                z_alert = "❌"
+            elif z_score == "⚠️" and z_alert != "❌":
+                z_alert = "⚠️"
+    z_message = "; ".join(z_messages) if z_messages else "No anomalies"
+    confidence_factors.append(("🧨 Z-Score Anomalies", z_message, z_alert))
+
+    # === 🧠 Top-tree class consensus ===
+    booster = model.get_booster()
+    pred_leaf_sample = booster.predict(DMatrix(sample_df), pred_leaf=True)[0]
+    pred_leaf_train = booster.predict(DMatrix(X_train), pred_leaf=True)
+    n_trees = pred_leaf_train.shape[1]
+
+    tree_logits = booster.predict(DMatrix(sample_df), pred_contribs=True)[0][:-1]
+    top_k = max(1, int(0.1 * n_trees))
+    top_indices = np.argsort(-np.abs(tree_logits))[:top_k]
+    top_tree_votes = []
+    for i in top_indices:
+        leaf_id = pred_leaf_sample[i]
+        match_mask = pred_leaf_train[:, i] == leaf_id
+        labels_in_leaf = y_train[match_mask]
+        vote = round(np.mean(labels_in_leaf)) if len(labels_in_leaf) > 0 else -1
+        top_tree_votes.append(vote)
+    consensus_top = np.mean(np.array(top_tree_votes) == pred_label)
+    consensus_score_top = percentile_score(consensus_top, [1] * len(X_train), thresholds=(0.5, 0.7))
+    confidence_factors.append(("🧠 Top-Tree Class Consensus", f"{consensus_top:.2%}", consensus_score_top))
+
+    # === 🌳 Tree Path Similarity ===
+    node_counts = defaultdict(int)
+    for tree_id in range(n_trees):
+        train_nodes = pred_leaf_train[:, tree_id]
+        unique, counts = np.unique(train_nodes, return_counts=True)
+        for nid, cnt in zip(unique, counts):
+            node_counts[(tree_id, nid)] = cnt
+
+    path_weight = sum(node_counts.get((i, pred_leaf_sample[i]), 0) for i in range(n_trees))
+    total_weight = len(X_train) * n_trees
+    avg_support = path_weight / total_weight
+
+    # Generate avg_support_train for percentile scoring
+    avg_support_train = []
+    for i in range(len(X_train)):
+        support = sum(node_counts.get((tree_id, pred_leaf_train[i][tree_id]), 0)
+                      for tree_id in range(n_trees))
+        avg_support_train.append(support / len(X_train) / n_trees)
+
+    soft_score = percentile_score(avg_support, avg_support_train, reverse=True)
+    confidence_factors.append(("🌳 Tree Path Similarity", f"{avg_support:.2%}", soft_score))
+
+    # === 🌐 Rare Path Coverage ===
+    rare_ratio, rare_score = compute_rare_path_coverage(model, X_train, sample_df, rare_threshold=20)
+    confidence_factors.append(("🌐 Rare Path Coverage", f"{rare_ratio:.2f}%", rare_score))
+
+    # === 🧮 Final score ===
+    counts = {s: sum(1 for _, _, score in confidence_factors if score == s) for s in ["✅", "⚠️", "❌"]}
+    if counts["❌"] > 0:
+        level = "🔴 Low"
+    elif counts["⚠️"] > 1:
+        level = "🟡 Medium"
+    else:
+        level = "🟢 High"
+
+    df_report = pd.DataFrame(confidence_factors, columns=["Factor", "Status", "Score"])
+    return df_report, level
+
+
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def percentile_score(value, reference_distribution, thresholds=(0.90, 0.98), reverse=False):
+#     """
+#     Assign a confidence score based on how extreme `value` is compared to `reference_distribution`.
+
+#     Parameters:
+#         value (float): the sample value to evaluate
+#         reference_distribution (array-like): the training values to compare against
+#         thresholds (tuple): (⚠️ threshold, ❌ threshold) as percentiles (default: 90% and 98%)
+#         reverse (bool): if True, higher values are worse (e.g., distance); else, lower values are worse
+
+#     Returns:
+#         score (str): one of "✅", "⚠️", or "❌"
+#     """
+#     ref = np.asarray(reference_distribution)
+#     if reverse:
+#         p = (ref > value).mean()  # higher = worse
+#     else:
+#         p = (ref < value).mean()  # lower = worse
+
+#     if p > thresholds[1]:
+#         return "❌"
+#     elif p > thresholds[0]:
+#         return "⚠️"
+#     else:
+#         return "✅"
+
+
+# z_val = ...
+# z_vals_train = ...  # as array of abs Z scores
+# score = percentile_score(abs(z_val), z_vals_train, thresholds=(0.9, 0.98), reverse=False)
+
+
+
+
+# dist_sample = np.linalg.norm(X_train - sample_df.values, axis=1).min()  # or average
+# dist_train = ...  # e.g., distance to nearest neighbor for each point in X_train
+# score = percentile_score(dist_sample, dist_train, thresholds=(0.9, 0.98), reverse=True)
+# train_dists = np.linalg.norm(X_train - sample_df.values, axis=1)
+# p = (train_dists < avg_dist).mean()
+
+# if p > 0.98:
+#     score = "❌"
+# elif p > 0.9:
+#     score = "⚠️"
+# else:
+#     score = "✅"
+
+
+
+
+
+# score = percentile_score(avg_support, avg_support_train, thresholds=(0.9, 0.98), reverse=False)
+
+
+
+
+
+# # Compute avg_support for all training points
+# train_leaf = booster.predict(DMatrix(X_train), pred_leaf=True)
+# node_counts = defaultdict(int)
+# for tree_id in range(train_leaf.shape[1]):
+#     for nid in np.unique(train_leaf[:, tree_id]):
+#         node_counts[(tree_id, nid)] += np.sum(train_leaf[:, tree_id] == nid)
+
+# # Calculate avg_support for all training points
+# avg_support_train = []
+# for i in range(train_leaf.shape[0]):
+#     support = sum(node_counts[(tree_id, train_leaf[i, tree_id])] for tree_id in range(n_trees))
+#     avg_support_train.append(support / len(X_train))
+
+# # Then percentile
+# percentile = (np.array(avg_support_train) < avg_support).mean()
+# if percentile > 0.98:
+#     score = "❌"
+# elif percentile > 0.9:
+#     score = "⚠️"
+# else:
+#     score = "✅"
