@@ -246,6 +246,44 @@ def compute_rare_path_coverage(model, X_train, sample_df, rare_threshold=20):
 
     return round(rare_ratio * 100, 2), score
 
+
+def dump_all_trees_as_json_df(booster):
+    import pandas as pd
+    import json
+
+    json_trees = booster.get_dump(dump_format='json')
+    tree_dfs = []
+
+    for i, tree_json in enumerate(json_trees):
+        tree = json.loads(tree_json)
+        nodes = []
+
+        def parse_node(node, depth=0, parent_id=None):
+            nid = node['nodeid']
+            row = {
+                'tree': i,
+                'node': nid,
+                'depth': depth,
+                'parent': parent_id,
+                'split': node.get('split'),
+                'split_condition': node.get('split_condition'),
+                'yes': node.get('yes'),
+                'no': node.get('no'),
+                'missing': node.get('missing'),
+                'leaf': node.get('leaf'),
+                'gain': node.get('gain'),
+                'cover': node.get('cover'),
+            }
+            nodes.append(row)
+            if 'children' in node:
+                for child in node['children']:
+                    parse_node(child, depth + 1, nid)
+
+        parse_node(tree)
+        tree_dfs.append(pd.DataFrame(nodes))
+
+    return pd.concat(tree_dfs, ignore_index=True)
+
 def get_confidence_report(model, X_train, y_train, sample_df, pred_label):
     sample = sample_df.iloc[0]
     confidence_factors = []
@@ -354,3 +392,97 @@ def get_confidence_report(model, X_train, y_train, sample_df, pred_label):
 
     df_report = pd.DataFrame(confidence_factors, columns=["Factor", "Status", "Score"])
     return df_report, level
+
+
+
+
+# def get_feature_path_ranges(model, X_sample, encoders, categorical_columns):
+#     booster = model.get_booster()
+#     tree_df = dump_all_trees_as_json_df(booster)  # ✅ replace trees_to_dataframe()
+
+#     leaf_indices = booster.predict(DMatrix(X_sample), pred_leaf=True)[0]
+#     sample = X_sample.iloc[0]
+
+#     feature_ranges = {}
+#     for tree_id, leaf_id in enumerate(leaf_indices):
+#         tree_data_tree = tree_df[tree_df["tree"] == tree_id]
+#         if tree_data_tree.empty:
+#             continue
+
+#         all_ids = set(tree_data_tree['node'])
+#         referenced_ids = set(tree_data_tree['yes']).union(tree_data_tree['no'])
+#         root_ids = all_ids - referenced_ids
+#         node = next(iter(root_ids), None)
+#         if node is None:
+#             continue
+
+#         while True:
+#             row = tree_data_tree[tree_data_tree["node"] == node]
+#             if row.empty:
+#                 break
+#             row = row.iloc[0]
+
+#             if row["leaf"] is not None:
+#                 break
+
+#             feat = row["split"]
+#             yes_node = row["yes"]
+#             no_node = row["no"]
+#             val = sample.get(feat, None)
+
+#             if val is None:
+#                 break
+
+#             if feat in categorical_columns:
+#                 try:
+#                     le = encoders[feat]
+#                     threshold = int(float(row["split_condition"]))
+#                     all_cats = list(range(len(le.classes_)))
+#                     left_cats = [i for i in all_cats if i < threshold]
+#                     right_cats = [i for i in all_cats if i >= threshold]
+
+#                     if val < threshold:
+#                         chosen_cats = le.inverse_transform(left_cats)
+#                         node = yes_node
+#                         side = "left"
+#                     else:
+#                         chosen_cats = le.inverse_transform(right_cats)
+#                         node = no_node
+#                         side = "right"
+
+#                     if feat not in feature_ranges:
+#                         feature_ranges[feat] = {
+#                             "type": "categorical",
+#                             "categories": set(chosen_cats),
+#                             "side": side
+#                         }
+#                     else:
+#                         feature_ranges[feat]["categories"].update(chosen_cats)
+
+#                     continue
+
+#                 except Exception as e:
+#                     print(f"[⚠️ WARN] Categorical decoding failed for {feat}: {e}")
+#                     break
+
+#             try:
+#                 threshold = float(row["split_condition"])
+#             except:
+#                 break
+
+#             if feat not in feature_ranges:
+#                 feature_ranges[feat] = {"min": -np.inf, "max": np.inf}
+
+#             if val < threshold:
+#                 feature_ranges[feat]["max"] = min(feature_ranges[feat]["max"], threshold)
+#                 node = yes_node
+#             else:
+#                 feature_ranges[feat]["min"] = max(feature_ranges[feat]["min"], threshold)
+#                 node = no_node
+
+#     # Post-process categorical sets
+#     for feat in feature_ranges:
+#         if feature_ranges[feat].get("type") == "categorical":
+#             feature_ranges[feat]["categories"] = sorted(list(feature_ranges[feat]["categories"]))
+
+#     return feature_ranges
