@@ -152,77 +152,78 @@ def generate_streaming_chunks(model, tokenizer, prompt, **kwargs):
         yield chunk
 
 
-
 # import re
-# from typing import Union, List
+# from typing import List, Union
+# from itertools import product
 
-# # Define simple expression node structure
-# class ExprNode:
-#     def __init__(self, value: Union[str, List['ExprNode']], op: str = None):
-#         self.value = value  # Can be a condition (str) or a list of subnodes
-#         self.op = op        # 'AND', 'OR', or None
+# # Node structure
+# class Node:
+#     def __init__(self, value: Union[str, List['Node']], op: str = None):
+#         self.value = value
+#         self.op = op  # 'AND' or 'OR' or None
 
 #     def __repr__(self):
 #         if isinstance(self.value, str):
 #             return self.value
 #         return f"({f' {self.op} '.join(map(str, self.value))})"
 
-# # Tokenizer for basic logical grammar
-# def tokenize(expression: str) -> List[str]:
-#     # Keep AND, OR, parentheses, and individual conditions
-#     tokens = re.findall(r'\(|\)|AND|OR|[^()\s]+(?:\s*=\s*[^()\s]+|[!<>=]+\s*[^()\s]+)?', expression)
-#     return [t.strip() for t in tokens if t.strip()]
+# # Tokenizer
+# def tokenize(expr: str) -> List[str]:
+#     if not expr or not expr.strip():
+#         return []
 
-# # Recursive descent parser
-# def parse_tokens(tokens: List[str]) -> ExprNode:
-#     def parse_expr(index=0):
-#         result = []
+#     expr = expr.replace("&&", "AND").replace("||", "OR")
+#     pattern = r'\(|\)|AND|OR|[^()\s]+(?:\s*[!=<>]=?\s*[^()\s]+)?'
+#     tokens = re.findall(pattern, expr, flags=re.IGNORECASE)
+#     return [t.upper() if t.upper() in {'AND', 'OR'} else t.strip() for t in tokens if t.strip()]
+
+# # Recursive parser
+# def parse(tokens: List[str]) -> Node:
+#     def parse_expr(index):
+#         stack = []
 #         current_op = None
+
+#         def reduce_stack():
+#             if not stack:
+#                 return None
+#             if len(stack) == 1:
+#                 return stack[0]  # ← Cas simple: une seule condition
+#             if current_op == 'AND':
+#                 return Node(stack, 'AND')
+#             elif current_op == 'OR':
+#                 return Node(stack, 'OR')
+#             return stack[0]  # ← Fallback si l’opérateur est absent
+
 
 #         while index < len(tokens):
 #             token = tokens[index]
 #             if token == '(':
-#                 sub_expr, index = parse_expr(index + 1)
-#                 result.append(sub_expr)
+#                 node, index = parse_expr(index + 1)
+#                 stack.append(node)
 #             elif token == ')':
-#                 break
-#             elif token in ('AND', 'OR'):
+#                 return reduce_stack(), index
+#             elif token in {'AND', 'OR'}:
 #                 current_op = token
 #             else:
-#                 result.append(ExprNode(token))
-
-#             if len(result) >= 3 and isinstance(result[-2], str) and result[-2] in ('AND', 'OR'):
-#                 right = result.pop()
-#                 op = result.pop()
-#                 left = result.pop()
-#                 result.append(ExprNode([left, right], op))
+#                 stack.append(Node(token))
 #             index += 1
 
-#         return result[0], index
+#         return reduce_stack(), index
 
-#     root, _ = parse_expr()
-#     return root
+#     tree, _ = parse_expr(0)
+#     return tree
 
-# # Flatten tree into all combinations of AND-only branches
-# def flatten_expr(expr: ExprNode) -> List[List[str]]:
-#     if isinstance(expr.value, str):
-#         return [[expr.value]]
+# # Flatten tree into AND combinations
+# def expand(node: Node) -> List[List[str]]:
+#     if isinstance(node.value, str):
+#         return [[node.value]]
 
-#     if expr.op == 'AND':
-#         parts = [flatten_expr(sub) for sub in expr.value]
-#         from itertools import product
+#     if node.op == 'AND':
+#         parts = [expand(child) for child in node.value]
 #         return [sum(p, []) for p in product(*parts)]
 
-#     elif expr.op == 'OR':
-#         result = []
-#         for sub in expr.value:
-#             result.extend(flatten_expr(sub))
-#         return result
-
-# # Test on example
-# example_criteria = df.loc[0, 'criteria']
-# tokens = tokenize(example_criteria)
-# parsed = parse_tokens(tokens)
-# flattened = flatten_expr(parsed)
-
-# import ace_tools as tools; tools.display_dataframe_to_user("Exploded Test Cases", pd.DataFrame({"test_conditions": flattened}))
+#     if node.op == 'OR':
+#         results = []
+#         for child in node.value:
+#             results.extend(expand(child))
+#         return results
